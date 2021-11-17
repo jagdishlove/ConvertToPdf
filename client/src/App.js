@@ -15,19 +15,28 @@ function App() {
 
   const handleChange = ({ target: { value, name } }) => {
     setState({ [name]: value });
-
-
-
-    return (
-      <div className="App">
-        <input type="text" placeholder="Name" name="name" onChange={handleChange} />
-        <input type="number" placeholder="Receipt ID" name="ReceiptId" onChange={handleChange} />
-        <input type="number" placeholder="Price1" name="price1" onChange={handleChange} />
-        <input type="number" placeholder="Price2" name="price2" onChange={handleChange} />
-        <button onClick={""}>Download PDF</button>
-      </div>
-    );
   }
+
+  const createDownloadPdf = () => {
+    axios.post('/create-pdf', state)
+      .then(() => axios.get('fetch-pdf',{ responseType: 'blob' }))
+      .then(res=>{
+        const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
+        saveAs(pdfBlob, 'result.pdf');
+      })
+
+  }
+
+  return (
+    <div className="App">
+      <input type="text" placeholder="Name" name="name" onChange={handleChange} />
+      <input type="number" placeholder="Receipt ID" name="ReceiptId" onChange={handleChange} />
+      <input type="number" placeholder="Price1" name="price1" onChange={handleChange} />
+      <input type="number" placeholder="Price2" name="price2" onChange={handleChange} />
+      <button onClick={createDownloadPdf}>Download PDF</button>
+    </div>
+  );
 }
+
 
 export default App;
